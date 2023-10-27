@@ -1,0 +1,39 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class DragonBossShooting : MonoBehaviour
+{
+    public GameObject player;
+    private Rigidbody2D rigid2D;
+    public float force;
+    private float timer;
+
+    void Start()
+    {
+        rigid2D = GetComponent<Rigidbody2D>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        Vector3 direction = player.transform.position - transform.position;
+        rigid2D.velocity = new Vector2(direction.x, direction.y).normalized * force;
+        float rot = Mathf.Atan2(-direction.y, -direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, rot);
+    }
+
+    void Update()
+    {
+        timer += Time.deltaTime;
+        if (timer > 5)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            player.GetComponent<Playable_Character_Script>().TakeDamageArrow(45);
+            Destroy(gameObject);
+        }
+    }
+}
